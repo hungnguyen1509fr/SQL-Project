@@ -1,12 +1,4 @@
-﻿USE LOCKHEED_MARTIN_SYNAPSE;
--- Step 1: Set the database to single-user mode (optional but recommended)
-ALTER DATABASE LOCKHEED_MARTIN_SYNAPSE SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 
--- Step 2: Rename the database
-ALTER DATABASE LOCKHEED_MARTIN_SYNAPSE MODIFY NAME = LIDL_EXPORT_DATA;
-
--- Step 3: Set the database back to multi-user mode
-ALTER DATABASE LIDL_EXPORT_DATA SET MULTI_USER;
 
 /*
 Executives's question:
@@ -38,18 +30,18 @@ a temporary table with all neccessary information which is #Comprehensive_Data.
 IF OBJECT_ID ('TEMPDB..[#Comprehensive_Data]','U') IS NOT NULL DROP TABLE [#Comprehensive_Data]
 
 SELECT  
-		[YEAR]								= YEAR(X1.orderdate),
-		[ORDER_ID]							= X1.orderid
+	    [YEAR]							= YEAR(X1.orderdate)
+	   ,[ORDER_ID]							= X1.orderid
 	   ,[EMPLOYEES_ID]						= X5.EmployeeID
 	   ,[FULL_NAME_EMP]						= CONCAT( X5.Firstname, ' ', X5.Lastname)
 	   ,[REVENUE]							= SUM(X2.unitprice * X2.qty)
-	   ,[PROFIT]                            = CAST(SUM(X2.unitprice * X2.qty * (1 - X2.discount)) AS INT)
+	   ,[PROFIT]                            			= CAST(SUM(X2.unitprice * X2.qty * (1 - X2.discount)) AS INT)
 	   ,[CATEGORY_NAME]						= X4.CategoryName
-	   ,[PRODUCT_NAME]                      = X3.PRODUCTNAME
+	   ,[PRODUCT_NAME]                     				= X3.PRODUCTNAME
 	   ,[SHIPPED_DATE]						= X1.shippeddate
 	   ,[ORDER_DATE]						= X1.orderdate
 	   ,[SHIPPED_CITY]						= X1.shipcity
-	   ,[SHIPPED_COUNTRY]					= X1.shipcountry
+	   ,[SHIPPED_COUNTRY]						= X1.shipcountry
 INTO    #Comprehensive_Data
 FROM Sales.Orders X1 
 LEFT JOIN Sales.OrderDetails X2 ON X1.orderid = X2.orderid
@@ -517,6 +509,7 @@ CREATE PROCEDURE product_report
 AS
 BEGIN
 IF OBJECT_ID ('[dbo].[product_performance]','U') IS NOT NULL DROP TABLE [dbo].[product_performance]
+	
 DECLARE @REPORT_DATE DATE    = (SELECT MAX(orderdate) FROM [Sales].[Orders])
 DECLARE @CUR_MONTH DATE = DATEADD(MONTH,-1,DATEADD(DAY,1,EOMONTH(@REPORT_DATE)))
 DECLARE @1M_AGO DATE    = DATEADD(MONTH,-2,DATEADD(DAY,1,EOMONTH(@REPORT_DATE)))
@@ -558,5 +551,5 @@ WHERE PRODUCT_ID IS NOT NULL
 GROUP BY PRODUCT_NAME,PRODUCT_ID;
 END;
 -- Execute the stored procedure 
-EXEC kpi_employee_report;
+EXEC product_report;
 
