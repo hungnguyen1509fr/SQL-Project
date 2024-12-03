@@ -42,6 +42,7 @@ __Categorical Analysis__:
 
 __Time-Based Analysis__:
 -Analyzed trends over specific periods (e.g., month-over-month revenue).
+
 __Output Highlights__:
 -Delivered insights like top-performing employees/products, revenue trends, and discount impact analysis.
 -Created reusable reporting tables (kpi_employee, product_performance, Discount.report) for visualization tools.
